@@ -3,6 +3,7 @@ package searchhome;
 import searchhome.utils.FileHandelUtil;
 
 import javax.swing.JFileChooser;
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,6 +17,7 @@ import java.util.Set;
  * 2.选择文件被复制后存放的目标目录：targetPath
  * 3.文件后缀名分类文件，并且将文件复制到不同的文件夹
  * 4.重复文件(文件名，文件大小)删除(符合格式："pdf","epub","azw3","mobi")，不转移
+ * 5.按文件名分类
  */
 public class FileTyleMean {
     //文件信息
@@ -50,7 +52,7 @@ public class FileTyleMean {
          */
         handlePath(sourcePath, outputPath);
 
-        System.out.println("扫描到的处理文件数量：["+scanFileSum+"]"+"重复文件数量：["+OFileSum+"]"+"复制文件数量：[" + fileSum + "]" +"删除成功文件：["+successFileName+"]"+ "删除失败文件：[" + fairFileName.size() + "]" + "删除失败文件名：" + fairFileName.toString());
+        System.out.println("扫描到的处理文件数量：[" + scanFileSum + "]" + "重复文件数量：[" + OFileSum + "]" + "复制文件数量：[" + fileSum + "]" + "删除成功文件：[" + successFileName + "]" + "删除失败文件：[" + fairFileName.size() + "]" + "删除失败文件名：" + fairFileName.toString());
     }
 
     /**
@@ -88,8 +90,11 @@ public class FileTyleMean {
                 }
                 fileInfoStr.setLength(0);
                 if (fileName.contains(".")) {
-                    //4.2.2.根据文件最后的输出的目标目录和文件的后缀名，执行copy的操作（因为最后输出格式为按文件的后缀名分类，即最后输出如：pdf目录下面有pdf文件，txt目录下面有txt文件）
-                    copy(file, new File(outputPath, suffix));
+                    if (FileHandelUtil.judgeContainsStr(fileName.substring(0,fileName.lastIndexOf('.')))) {
+                        copy(file, new File(outputPath + File.separator + "ProgramingTechnique", suffix));
+                    } else {
+                        copy(file, new File(outputPath + File.separator + "ceramics", suffix));
+                    }
                 } else {
                     //4.3.如果该文件没有后缀名，即不包含“.”点符号，则直接在文件最后的输出的目标目录下建立“nosuffix”目录，执行copy的操作，将没有后缀名的文件复制到nosuffix目录下
                     copy(file, new File(outputPath, "nosuffix"));
@@ -108,7 +113,8 @@ public class FileTyleMean {
         System.out.println("copying " + sourceFile);
         //1.如果目标目录不存在，则新建，此处的目标目录为按文件后缀名命名的目录，如pdf目录，txt目录以及nosuffix目录
         if (!targetDir.exists()) {
-            targetDir.mkdir();//新建目录
+            //新建目录
+            targetDir.mkdirs();
         }
         try {
             //2.将源文件读取到输入流中
@@ -153,6 +159,7 @@ public class FileTyleMean {
     private static File getSourcePath() {
         //1.弹出文件选择对话框
         JFileChooser chooser = new JFileChooser();
+        chooser.setPreferredSize(new Dimension(900,900));
         //2.设置只能选择目录
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         //3.返回选择的目录，如果没有选择则返回null
@@ -170,6 +177,7 @@ public class FileTyleMean {
     private static File getOutputPath() {
         //1.弹出文件选择对话框
         JFileChooser chooser = new JFileChooser();
+        chooser.setPreferredSize(new Dimension(900,900));
         //2.设置只能选择目录
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         //3.返回选择的目录，如果没有选择则返回null
@@ -185,7 +193,7 @@ public class FileTyleMean {
             boolean isDe = file.delete();
             if (!isDe) {
                 fairFileName.add(file.getAbsolutePath());
-            }else{
+            } else {
                 successFileName++;
             }
             return isDe;

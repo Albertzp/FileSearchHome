@@ -37,20 +37,8 @@ public class demo {
      * @param args
      */
     public static void main(String[] args) {
-        /**
-         * 选择被复制的源目录：sourcePath
-         */
-        File sourcePath = getSourcePath();
-        /**
-         * 选择文件被复制后存放的目标目录：targetPath
-         */
-        File outputPath = getOutputPath();
-        /**
-         * 执行复制操作
-         */
-        handlePath(sourcePath, outputPath);
 
-        System.out.println("扫描到的处理文件数量：["+scanFileSum+"]"+"重复文件数量：["+OFileSum+"]"+"复制文件数量：[" + fileSum + "]" +"删除成功文件：["+successFileName+"]"+ "删除失败文件：[" + fairFileName.size() + "]" + "删除失败文件名：" + fairFileName.toString());
+        System.out.println(FileHandelUtil.judgeContainsStr("编程"));
     }
 
     /**
